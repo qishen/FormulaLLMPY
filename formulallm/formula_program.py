@@ -1,18 +1,21 @@
 from pythonnet import load
 load("coreclr")
-from sys import platform
+import sys
 import os
 import clr
 
 class FormulaInterface:
     def __init__(self):
         process_path = ""
-        if platform.startswith("win"):
+        if sys.platform.startswith("win"):
             # handle windows
             process_path = os.path.expanduser('~') + r'\.dotnet\tools\.store\vuisis.formula.x64\1.0.0\vuisis.formula.x64\1.0.0\tools\net6.0\any\VUISIS.Formula.x64.dll'
-        elif platform.startswith("darwin"):
+        elif sys.platform.startswith("darwin"):
             # handle macos
-            process_path = os.path.expanduser('~') + r'/.dotnet/tools/.store/vuisis.formula/1.0.0/vuisis.formula/1.0.0/tools/net6.0/any/VUISIS.Formula.dll'
+            if os.uname().machine == 'arm64':
+                process_path = os.path.expanduser('~') + r'/.dotnet/tools/.store/vuisis.formula.arm64/1.0.0/vuisis.formula.arm64/1.0.0/tools/net6.0/any/VUISIS.Formula.ARM64.dll'
+            else:
+                process_path = os.path.expanduser('~') + r'/.dotnet/tools/.store/vuisis.formula.x64/1.0.0/vuisis.formula.x64/1.0.0/tools/net6.0/any/VUISIS.Formula.x64.dll'
         else:
             # handle linux 
             process_path = os.path.expanduser('~') + r'/.dotnet/tools/.store/vuisis.formula/1.0.0/vuisis.formula/1.0.0/tools/net6.0/any/VUISIS.Formula.dll'

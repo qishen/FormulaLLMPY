@@ -1,14 +1,14 @@
 FIX_CODE_PREFIX =  """ \
 SYSTEM MESSAGE:
 
-You will be provided a Formula DSL program and unsat core. You will explain why the program is broken and give solutions to fixing it.
+You are a computer scientist. You will be provided the assembly of a C++ program. You will explain why the program is broken and give solutions to fixing it.
 
 END OF SYSTEM MESSAGE"""
 
 REPAIR_CODE_PREFIX = """ \
 SYSTEM MESSAGE:
 
-You will be provided a Formula DSL program and unsat core. You will give repairs of the code in the Formula DSL language enclosed in code labelled triple backticks. Give the line numbers of the code in the triple backticks.
+You are a computer scientist. You will be provided the assembly of a C++ program. You will give repairs of the code in labelled triple backticks.
 
 END OF SYSTEM MESSAGE"""
 
