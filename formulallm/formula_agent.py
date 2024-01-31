@@ -33,7 +33,7 @@ agent_executor = AgentExecutor.from_agent_and_tools(
         verbose=True,
 )
 
-def run_agent_executor(code, output, prompt):
+def run_agent(code, output, prompt):
     prompts = QUERY_PROMPT.format(code=code, output=output, prompt=prompt)
     prompts.encode('unicode_escape')
     agent_executor.run(prompts)
