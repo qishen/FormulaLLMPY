@@ -1,14 +1,14 @@
 # FORMULA LLM - LLM Explanation and Repair
 
 ### Requirements
-```bash
+```
 python = 3.10
 dotnet 6.0
 poetry 
 ```
 
 ### Python dependencies
-```bash
+```
 Dependencies are listed in pyproject.toml under [tool.poetry.dependencies]
 ```
 
@@ -33,7 +33,19 @@ $ poetry install
 $ dotnet tool install --global VUISIS.Formula.<x64|ARM64> 
 ```
 
-### Set OpenAI Env (optional)
+### Set OpenAI Env 
+```
+Set the environment variable OPENAI_API_KEY if using agents module and GPT before running.
+```
+
+### Install Ollama For Local LLM
 ```bash
-Set the environment variable OPENAI_API_KEY if using GPT before running.
+// Download Ollama for your platform here https://ollama.com/download if using pipelines module.
+
+// Pull the LLM models
+$ ollama pull mistral
+$ ollama pull bakllava
+
+// Run the Ollama server exe or by command
+$ ollama serve
 ```
