@@ -9,8 +9,6 @@ QUERY_PROMPT = """ \
 {prompt}
 
 {code}
-
-{output}
 """
 
 OUTPUT_RETURN = """ \
