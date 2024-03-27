@@ -11,10 +11,10 @@ from typing import List
 from abc import ABC, abstractmethod
 
 class QAPipeline(ABC):
-    def __init__(self, llm="mistral", img_caption="bakllava"):
-        self.llm = Ollama(base_url='http://localhost:11434', model=llm, temperature=0.0)
-        self.multi_modal = Ollama(base_url='http://localhost:11434', model=img_caption, temperature=0.0)
-        self.oembed = OllamaEmbeddings(base_url="http://localhost:11434", model=llm, temperature=0.0)
+    def __init__(self, llm="mistral", img_caption="bakllava", llm_temp=0.0, multi_modal_temp=0.0, oembed_temp=0.0):
+        self.llm = Ollama(base_url='http://localhost:11434', model=llm, temperature=llm_temp)
+        self.multi_modal = Ollama(base_url='http://localhost:11434', model=img_caption, temperature=multi_modal_temp)
+        self.oembed = OllamaEmbeddings(base_url="http://localhost:11434", model=llm, temperature=oembed_temp)
         self.vectorstore = None
         self.qachain = None
 
@@ -49,5 +49,17 @@ class OllamaMultiQAPipeline(QAPipeline):
         self.vectorstore = Chroma.from_documents(documents=process_documents(source_path, chunk_size, chunk_overlap), embedding=self.oembed)
         self.qachain = RetrievalQA.from_chain_type(self.llm, retriever=self.vectorstore.as_retriever())
     
+    def extract_image_data(self, image: str):
+        prompt = "what is in this image?"
+        results = []
+        for _ in range(10):
+            res = self.run_multi_modal([image], prompt)
+            results.append(res)
+
+        for res in results:
+            docs = self.vectorstore.similarity_search(res)
+            for doc in docs:
+                print(doc.page_content)
+
     def run(self, question: str):
         return self.qachain({"query": question})['result']
