@@ -59,7 +59,9 @@ class OllamaMultiQAPipeline(QAPipeline):
         for res in results:
             docs = self.vectorstore.similarity_search(res)
             for doc in docs:
+                print(doc.metadata["source"])
                 print(doc.page_content)
+                print()
 
     def run(self, question: str):
         return self.qachain({"query": question})['result']

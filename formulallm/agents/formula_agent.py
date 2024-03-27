@@ -10,11 +10,11 @@ from .formula_tools import FormulaCodeLLM
 from .prompts import FIX_CODE_PREFIX, QUERY_PROMPT
 
 class FormulaAgent:
-    def __init__(self, model="gpt-3.5_turbo"):
+    def __init__(self, model="gpt-3.5-turbo-0125", temperature=0.0):
         if not os.environ["OPENAI_API_KEY"]:
             raise ValueError("Environment variable OPENAI_API_KEY is not set.")
         
-        self.llm = ChatOpenAI(temperature=0.0, model=model)
+        self.llm = ChatOpenAI(temperature=temperature, model=model)
 
         system_message = SystemMessage(content=FIX_CODE_PREFIX)
         _prompt = OpenAIFunctionsAgent.create_prompt(system_message=system_message)
