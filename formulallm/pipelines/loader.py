@@ -57,7 +57,7 @@ def plt_img_base64(img_base64):
     # Display the image by rendering the HTML
     display(HTML(image_html))
 
-def convert_to_base64(pil_image):
+def convert_to_base64(pil_image, type):
     """
     Convert PIL images to Base64 encoded strings
 
@@ -66,7 +66,7 @@ def convert_to_base64(pil_image):
     """
 
     buffered = BytesIO()
-    pil_image.save(buffered, format="JPEG") 
+    pil_image.save(buffered, format=type) 
     img_str = base64.b64encode(buffered.getvalue()).decode("utf-8")
     return img_str
 

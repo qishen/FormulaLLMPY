@@ -7,7 +7,8 @@ from .prompts import (
     OUTPUT_RETURN,
     FORMULA_CODE_LLM_DESC
 )
-from langchain import LLMChain, PromptTemplate
+from langchain.chains import LLMChain
+from langchain.prompts import PromptTemplate
 from langchain.tools import BaseTool
 
 class FormulaCodeLLM(BaseTool):
