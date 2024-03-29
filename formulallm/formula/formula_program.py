@@ -1,23 +1,10 @@
 from pythonnet import load
 load("coreclr")
-import sys
-import os
+import os, glob
 import clr
 from typing import Optional
 
-process_path = ""
-if sys.platform.startswith("win"):
-    # handle windows
-    process_path = os.path.expanduser('~') + r'\.dotnet\tools\.store\vuisis.formula.x64\1.0.0\vuisis.formula.x64\1.0.0\tools\net6.0\any\VUISIS.Formula.x64.dll'
-elif sys.platform.startswith("darwin"):
-    # handle macos
-    if os.uname().machine == 'arm64':
-        process_path = os.path.expanduser('~') + r'/.dotnet/tools/.store/vuisis.formula.arm64/1.0.0/vuisis.formula.arm64/1.0.0/tools/net6.0/any/VUISIS.Formula.ARM64.dll'
-    else:
-        process_path = os.path.expanduser('~') + r'/.dotnet/tools/.store/vuisis.formula.x64/1.0.0/vuisis.formula.x64/1.0.0/tools/net6.0/any/VUISIS.Formula.x64.dll'
-else:
-    # handle linux 
-    process_path = os.path.expanduser('~') + r'/.dotnet/tools/.store/vuisis.formula/1.0.0/vuisis.formula/1.0.0/tools/net6.0/any/VUISIS.Formula.dll'
+process_path = glob.glob(os.path.expanduser('~') + r'/.dotnet/tools/.store/vuisis.formula*/**/VUISIS.Formula*.dll', recursive=True)
 
 clr.AddReference(process_path)
 
