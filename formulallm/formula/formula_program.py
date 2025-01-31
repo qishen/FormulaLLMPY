@@ -4,9 +4,9 @@ import os, glob
 import clr
 from typing import Optional
 
-process_path = glob.glob(os.path.expanduser('~') + r'/.dotnet/tools/.store/vuisis.formula*/**/VUISIS.Formula*.dll', recursive=True)
+process_paths = glob.glob(os.path.expanduser('~') + r'/.dotnet/tools/.store/vuisis.formula*/**/VUISIS.Formula*.dll', recursive=True)
 
-clr.AddReference(process_path)
+clr.AddReference(process_paths[0])
 
 from Microsoft.Formula.CommandLine import CommandInterface, CommandLineProgram
 from System.IO import StringWriter
