@@ -1,0 +1,46 @@
+domain GenericDataParser {
+    Status ::= {INIT, READ, UPDATE, TERMINATE, DONE}.
+
+    Byte ::= new (input: InputData, val: Integer, pos: Integer).
+    
+    InputData ::= new (name: String, data: String, length: Integer).
+
+    conforms Byte(inputData, val, pos), inputData is InputData(_, data, length), pos >= 0, pos < length.
+
+    State ::= new (inputData: InputData, status: Status, curPos: Integer, offset: Integer).
+    Transition ::= new (from: State, to: State).
+
+    IntermediateResult ::= new (name: String, context: State, derivedResult: String + Integer + { NULL }).
+
+    NextOffset ::= new (context: State, offset: Integer).
+    NextPos ::= new (context: State, pos: Integer).
+
+    OverRead ::= new (context: State).
+    OverRead(State(inputData, UPDATE, pos, offset)) :- OverRead(State(inputData, READ, pos, offset)).
+    OverRead(state) :- state is State(InputData(_, _, length), _, pos, offset), 
+        pos + offset >= length.
+
+    CanReadMore ::= new (context: State).
+    CanReadMore(State(inputData, UPDATE, pos, offset)) :- CanReadMore(State(inputData, READ, pos, offset)).
+    CanReadMore(state) :- state is State(InputData(_, _, length), _, pos, offset), 
+        pos + offset < length.
+
+    ContinueCondition ::= new (context: State).
+    ContinueCondition(State(inputData, UPDATE, pos, offset)) :- ContinueCondition(State(inputData, READ, pos, offset)).
+
+    State(inputData, DONE, pos, offset) :-
+        inputData is InputData(name, data, length),
+        State(inputData, _, pos, offset), 
+        offset + pos >= length.
+
+    isDone :- State(_, DONE, _, _).
+
+    State(initData, INIT, 0, 0) :- initData is InputData(_,_,_).
+
+    State(inputData, READ, newPos, newOffset),
+    Transition(oldState, State(inputData, READ, newPos, newOffset)) :-
+        oldState is State(inputData, _, pos, offset),
+        NextPos(oldState, newPos),
+        NextOffset(oldState, newOffset),
+        ContinueCondition(oldState).
+}

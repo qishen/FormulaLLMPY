@@ -1,0 +1,59 @@
+domain TinyDemoParser extends GenericDataParser at "ParserDSL.4ml" {
+    State(inputData, READ, pos, offset) :- State(inputData, INIT, 0, 0),
+        pos = 0, offset = 1. 
+
+    NextOffset(state, newOffset) :- state is State(_, _, 0, _), newOffset = 1. 
+
+    IntermediateResult("count", state, initialCount) :-
+        Byte(inputData, asciiAsInt, 0),
+        state is State(inputData, _, 0, _), 
+        initialCount = asciiAsInt - 48.
+
+    ContinueCondition(state) :- state is State(inputData, _, pos, offset), 
+        offset = 1,
+        IntermediateResult("count", state, val),
+        val = 0.
+
+    IntermediateResult("sum", state, initialSum) :- state is State(inputData, _, 0, _),
+        initialSum = 0.
+
+    NextOffset(state, newOffset) :- state is State(inputData, READ, pos, offset), 
+        pos > 0, newOffset = 1.
+        
+    IntermediateResult("sum", newState, newSum) :- 
+        oldState is State(inputData, READ, pos, offset),
+        newState is State(inputData, UPDATE, pos, offset),
+        pos > 0,
+        NextOffset(state, offset),
+        IntermediateResult("sum", oldState, oldSum),
+        Byte(inputData, asciiAsInt, pos),
+        asciiAsInt > 35,
+        newSum = oldSum + asciiAsInt - 48.
+
+    NextPos(state, newPos) :- state is State(inputData, READ, pos, offset), newPos = pos + offset.
+    
+}
+
+model m of TinyDemoParser at "TinyDemoParser.4ml" {
+    // Format: |header|#|digits| |header|#|digits| ...
+    // The byte in the header decides how many digits to read and it will return the sum.
+    // The header and the digits are separated by '#' and each expression is separated by space.
+    // Example: "3#1234 3#45" 
+    // "51(3) 35(#) 49(1) 50(2) 51(3) 52(4) 32(SPACE) 51(3) 35(#) 52(4) 53(5)" in ASCII format
+    inputData is InputData("sample", "3#1234 3#45", 11).
+
+    Byte(inputData,51,0), 
+    Byte(inputData,35,1), 
+    Byte(inputData,49,2), 
+    Byte(inputData,50,3), 
+    Byte(inputData,51,4),
+    Byte(inputData,52,5),
+    Byte(inputData,32,6), 
+    Byte(inputData,51,7), 
+    Byte(inputData,35,8),
+    Byte(inputData,52,9), 
+    Byte(inputData,53,10).
+
+    initState is State(inputData, INIT, 0, 0). 
+    initSum is IntermediateResult("sum", initState, 0).
+}
