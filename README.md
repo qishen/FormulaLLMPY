@@ -49,3 +49,8 @@ $ ollama pull bakllava
 // Run the Ollama server exe or by command
 $ ollama serve
 ```
+
+### Run Jupyter Notebook
+```bash
+$ jupyter notebook
+```
