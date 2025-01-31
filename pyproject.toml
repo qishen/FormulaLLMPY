@@ -2,13 +2,12 @@
 name = "formulallm"
 version = "0.1.2"
 description = ""
-authors = ["Aadi Bajpai <aadi.bajpai@vanderbilt.edu>","Stephen Johnson <stephen.johnson@vanderbilt.edu>"]
+authors = ["Aadi Bajpai <aadi.bajpai@vanderbilt.edu>","Stephen Johnson <stephen.johnson@vanderbilt.edu>","Qishen Zhang <qishen23@gmail.com>"]
 readme = "README.md"
 packages = [{include = "formulallm"}]
 
 [tool.poetry.dependencies]
-python = ">3.10,<3.11"
-openai = "0.28.1"
+python = ">3.10,<3.13"
 langchain = "0.1.8"
 langsmith = "0.1.5"
 langchain_community = "0.0.28"
@@ -19,9 +18,11 @@ pillow = "10.2.0"
 ipython = "8.21.0"
 pymupdf = "^1.23.26"
 chromadb = "^0.4.24"
-unstructured = "^0.12.6"
+unstructured = "^0.16.17"
 python-pptx = "^0.6.23"
 python-docx = "^1.1.0"
+openai = "^1.61.0"
+pypdf2 = "^3.0.1"
 
 [build-system]
 requires = ["poetry-core"]
