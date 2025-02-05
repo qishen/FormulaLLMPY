@@ -23,7 +23,7 @@ $ (Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Co
 
 ### Create conda environment
 ```bash
-$ conda create -n fpy python=3.10
+$ conda create -n fpy python=3.12
 $ conda activate fpy
 $ poetry install
 ```
@@ -34,8 +34,9 @@ $ dotnet tool install --global VUISIS.Formula.<x64|ARM64>
 ```
 
 ### Set OpenAI Env 
+Create a .env file in the root directory and set the environment variable OPENAI_API_KEY.
 ```
-Set the environment variable OPENAI_API_KEY if using agents module and GPT before running.
+OPENAI_API_KEY=<your-openai-api-key>
 ```
 
 ### Install Ollama For Local LLM
