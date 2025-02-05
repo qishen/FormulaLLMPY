@@ -5,10 +5,29 @@ You are a computer scientist. You will be provided the assembly of a C++ program
 
 END OF SYSTEM MESSAGE"""
 
+WRITE_FORMULA_CODE_PREFIX =  """ \
+SYSTEM MESSAGE:
+
+You are a computer scientist and you are learning the FORMULA modeling language. 
+
+You will be provided the assembly of C programs and you will model the code in FORMULA DSL.
+
+END OF SYSTEM MESSAGE"""
+
 QUERY_PROMPT = """ \
 {prompt}
 
 {code}
+"""
+
+QUERY_PROMPT_WITH_FILES = """ \
+{prompt}
+
+{file1}
+
+{file2}
+
+{file3}
 """
 
 OUTPUT_RETURN = """ \

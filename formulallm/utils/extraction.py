@@ -1,4 +1,5 @@
 import zipfile, fitz, os
+from PyPDF2 import PdfReader
 
 def extract_images_docx(docx_file: str, output_path: str):
     z = zipfile.ZipFile(docx_file)
@@ -46,3 +47,22 @@ def extract_pdf_drawings(pdf_file: str, output_path: str):
     pm = outpage.get_pixmap()
     file_name = os.path.basename(pdf_file)
     pm.save(output_path + r'pdfs/' + file_name + r'.png')
+
+def pdf2text(pdf_file_path: str):
+    text_formula_doc = []
+    reader = PdfReader(pdf_file_path)
+    for page in reader.pages:
+        text_formula_doc.append(page.extract_text())
+    return "".join(text_formula_doc)
+
+def file2text(file_path):
+    try:
+        with open(file_path, 'r', encoding='utf-8') as file:
+            text = file.read()
+        return text
+    except FileNotFoundError:
+        print(f"Error: The file {file_path} was not found.")
+        return None
+    except Exception as e:
+        print(f"Error reading file {file_path}: {e}")
+        return None

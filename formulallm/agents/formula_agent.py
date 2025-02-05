@@ -1,42 +1,72 @@
 import os
+from typing import List, Annotated, TypedDict
+from typing_extensions import TypedDict
+from dotenv import load_dotenv
 
-from langchain_community.chat_models import ChatOpenAI
-from langchain.agents.agent import AgentExecutor
-from langchain.agents.openai_functions_agent.base import OpenAIFunctionsAgent
-from langchain.schema.messages import SystemMessage
+from langchain.agents import AgentExecutor, create_react_agent
 from langchain.memory import ConversationBufferMemory
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_core.messages import HumanMessage, SystemMessage
+from langchain_deepseek import ChatDeepSeek
+from langchain_openai import ChatOpenAI
+from langgraph.graph import StateGraph, START, END
+from langgraph.graph.message import add_messages
 
-from .formula_tools import FormulaCodeLLM
-from .prompts import FIX_CODE_PREFIX, QUERY_PROMPT
+from formulallm.agents.prompts import *
 
-class FormulaAgent:
-    def __init__(self, model="gpt-3.5-turbo-0125", temperature=0.0):
-        if not os.environ["OPENAI_API_KEY"]:
-            raise ValueError("Environment variable OPENAI_API_KEY is not set.")
+class State(TypedDict):
+    # Messages have the type "list". The `add_messages` function
+    # in the annotation defines how this state key should be updated
+    # (in this case, it appends messages to the list, rather than overwriting them)
+    messages: Annotated[list, add_messages]
+
+class FormulaLLMAgent:
+    def __init__(self, model="deepseek-coder", temperature=0.0):
+        load_dotenv()
         
-        self.llm = ChatOpenAI(temperature=temperature, model=model)
+        if "deepseek" in model:
+            if not os.getenv("DEEPSEEK_API_KEY"):
+                raise ValueError("DEEPSEEK_API_KEY not found in .env file or environment variables")
+            self.llm = ChatDeepSeek(temperature=temperature, model=model)
+        else:
+            if not os.getenv("OPENAI_API_KEY"):
+                raise ValueError("OPENAI_API_KEY not found in .env file or environment variables")
+            self.llm = ChatOpenAI(temperature=temperature, model=model)
 
-        system_message = SystemMessage(content=FIX_CODE_PREFIX)
-        _prompt = OpenAIFunctionsAgent.create_prompt(system_message=system_message)
+    def run(self, prompt: str,files: List[str]) -> None:
+        print("Starting conversation with the agent. Type 'exit' to end the session.")
 
-        memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+        def chatbot(state: State):
+            return {"messages": [self.llm.invoke(state["messages"])]}
 
-        tools = [FormulaCodeLLM(name="formulallm", description="Formula llm", llm=self.llm)]
+        graph_builder = StateGraph(State)
+        graph_builder.add_node("chatbot", chatbot)
+        graph_builder.add_edge(START, "chatbot")
+        graph_builder.add_edge("chatbot", END)
+        graph = graph_builder.compile()
 
-        agent = OpenAIFunctionsAgent(
-            llm=self.llm,
-            prompt=_prompt,
-            tools=tools,
-            memory=memory
-        )
+        def stream_graph_updates(user_input: str):
+            for event in graph.stream({"messages": [
+                {"role": "user", "content": user_input},
+                {"role": "system", "content": ",".join(files)}
+            ]}):
+                for value in event.values():
+                    print("Assistant:", value["messages"][-1].content)
 
-        self.agent_executor = AgentExecutor.from_agent_and_tools(
-                agent=agent,
-                tools=tools,
-                verbose=True,
-        )
+        print("Getting back results from initial prompt...")
+        stream_graph_updates(prompt)
 
-    def run(self, code, prompt):
-        prompts = QUERY_PROMPT.format(code=code, prompt=prompt)
-        prompts.encode('unicode_escape')
-        self.agent_executor.run(prompts)
+        while True:
+            try:
+                user_input = input("User: ")
+                if user_input.lower() in ["quit", "exit", "q"]:
+                    print("Goodbye!")
+                    break
+                print("Start reasoning and generating code again...")
+                stream_graph_updates(user_input)
+            except:
+                # fallback if input() is not available
+                user_input = "What do you know about LangGraph?"
+                print("User: " + user_input)
+                stream_graph_updates(user_input)
+                break

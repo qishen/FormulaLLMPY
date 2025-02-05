@@ -1,1 +1,1 @@
-from .formula_agent import FormulaAgent
+from .formula_agent import FormulaLLMAgent
