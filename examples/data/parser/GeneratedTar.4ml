@@ -257,7 +257,7 @@ Byte(inputData,1,152).
 Byte(inputData,1,153).
 Byte(inputData,1,154).
 Byte(inputData,1,155).
-Byte(inputData,-100,156).
+Byte(inputData,-1000,156).
 Byte(inputData,1,157).
 Byte(inputData,1,158).
 Byte(inputData,1,159).
@@ -1127,7 +1127,7 @@ Byte(inputData,1,1022).
 Byte(inputData,1,1023).
 }
 
-model goodInput of TarParser {
+model correctInput of TarParser {
 inputData is InputData("tarfile", "data", 1024).
 initState is State(inputData, INIT, 0, 0).
 Byte(inputData,1,0).
