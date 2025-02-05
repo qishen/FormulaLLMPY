@@ -98,7 +98,7 @@ domain TarParser extends GenericDataParser at "ParserDSL.4ml" {
 }
 
 
-model wrongModel of TarParser {
+model maliciousInput of TarParser {
 inputData is InputData("tarfile", "data", 1024).
 initState is State(inputData, INIT, 0, 0).
 Byte(inputData,1,0).
@@ -1127,7 +1127,7 @@ Byte(inputData,1,1022).
 Byte(inputData,1,1023).
 }
 
-model rightModel of TarParser {
+model goodInput of TarParser {
 inputData is InputData("tarfile", "data", 1024).
 initState is State(inputData, INIT, 0, 0).
 Byte(inputData,1,0).

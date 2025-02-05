@@ -33,7 +33,7 @@ domain GenericDataParser {
         State(inputData, _, pos, offset), 
         offset + pos >= length.
 
-    isDone :- State(_, DONE, _, _).
+    parsingDone :- State(_, DONE, _, _).
 
     State(initData, INIT, 0, 0) :- initData is InputData(_,_,_).
 
